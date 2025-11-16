@@ -1,0 +1,7 @@
+-- SQL
+CREATE TABLE IF NOT EXISTS quotes (
+  id BIGSERIAL PRIMARY KEY,
+  quote_text TEXT NOT NULL,
+  author VARCHAR(255) NOT NULL,
+  category VARCHAR(100)
+);
