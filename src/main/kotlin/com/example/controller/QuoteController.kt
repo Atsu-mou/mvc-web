@@ -1,36 +1,54 @@
 package com.example.controller
 
 import com.example.model.Quote
-import com.example.repository.QuoteDao
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.service.QuoteService
+import org.slf4j.LoggerFactory
 
-class QuoteController(private val quoteRepository: QuoteDao) {
+/**
+ * Controller that handles HTTP requests for quote operations.
+ * Delegates business logic to the QuoteService.
+ */
+class QuoteController(private val quoteService: QuoteService) {
+    
+    private val logger = LoggerFactory.getLogger(QuoteController::class.java)
 
+    /**
+     * Adds a new quote.
+     */
+    suspend fun addQuote(text: String, author: String, category: String? = null): Quote {
+        logger.debug("Controller: Adding new quote")
+        return quoteService.createQuote(text, author, category)
+    }
 
-    suspend fun addQuote(text: String, author: String, category: String? = null): Quote =
-        withContext(Dispatchers.IO) {
-            val toInsert = Quote(
-                id = "",
-                createdDate = System.currentTimeMillis().toString(),
-                createdAt = System.currentTimeMillis().toString(),
-                quoteText = text,
-                author = author,
-                source = category
-            )
-            val id = quoteRepository.insert(toInsert)
-            toInsert.copy(id = id)
-        }
+    /**
+     * Retrieves a quote by ID.
+     */
+    suspend fun getQuote(id: String): Quote? {
+        logger.debug("Controller: Retrieving quote with ID: $id")
+        return quoteService.getQuote(id)
+    }
 
-    suspend fun getQuote(id: String): Quote? =
-        withContext(Dispatchers.IO) { quoteRepository.findById(id) }
+    /**
+     * Retrieves all quotes.
+     */
+    suspend fun getAllQuotes(): List<Quote> {
+        logger.debug("Controller: Retrieving all quotes")
+        return quoteService.getAllQuotes()
+    }
 
-    suspend fun getAllQuotes(): List<Quote> =
-        withContext(Dispatchers.IO) { quoteRepository.findAll() }
+    /**
+     * Updates an existing quote.
+     */
+    suspend fun updateQuote(quote: Quote): Boolean {
+        logger.debug("Controller: Updating quote with ID: ${quote.id}")
+        return quoteService.updateQuote(quote)
+    }
 
-    suspend fun updateQuote(quote: Quote): Boolean =
-        withContext(Dispatchers.IO) { quoteRepository.update(quote) }
-
-    suspend fun deleteQuote(id: String): Boolean =
-        withContext(Dispatchers.IO) { quoteRepository.delete(id) }
+    /**
+     * Deletes a quote by ID.
+     */
+    suspend fun deleteQuote(id: String): Boolean {
+        logger.debug("Controller: Deleting quote with ID: $id")
+        return quoteService.deleteQuote(id)
+    }
 }

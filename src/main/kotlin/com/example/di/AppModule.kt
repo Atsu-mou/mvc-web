@@ -3,6 +3,8 @@ package com.example.di
 import com.example.controller.QuoteController
 import com.example.repository.DynamoQuoteDao
 import com.example.repository.QuoteDao
+import com.example.service.QuoteService
+import com.example.service.QuoteServiceImpl
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
@@ -19,6 +21,7 @@ class AppModule {
         tableName: String = "quotes",
         endpointOverride: String? = null
     ) = module {
+        // DynamoDB client configuration
         single {
             val builder = DynamoDbClient.builder()
                 .region(region)
@@ -39,20 +42,29 @@ class AppModule {
             builder.build()
         }
 
+        // DynamoDB enhanced client
         single {
             DynamoDbEnhancedClient.builder()
                 .dynamoDbClient(get<DynamoDbClient>())
                 .build()
         }
 
+        // Repository layer
         single<QuoteDao> {
             DynamoQuoteDao(get(), tableName)
         }
 
+        // Service layer
+        single<QuoteService> {
+            QuoteServiceImpl(get())
+        }
+
+        // Controller layer
         single {
             QuoteController(get())
         }
 
+        // JSON configuration
         single {
             Json {
                 prettyPrint = true
