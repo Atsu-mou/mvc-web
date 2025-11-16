@@ -7,50 +7,81 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import org.slf4j.LoggerFactory
 
 fun Route.quoteRoutes() {
     val quoteController by inject<QuoteController>()
+    val logger = LoggerFactory.getLogger("QuoteRoutes")
 
     route("/quote") {
         get("/list") {
-            val quotes = quoteController.getAllQuotes()
-            call.respond(quotes)
+            try {
+                val quotes = quoteController.getAllQuotes()
+                call.respond(quotes)
+            } catch (e: Exception) {
+                logger.error("Error retrieving all quotes", e)
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to retrieve quotes"))
+            }
         }
 
         get("/{id}") {
-            val id = call.parameters["id"]
-            if (id == null) {
-                call.respond(HttpStatusCode.BadRequest, "ID parameter is missing")
-                return@get
-            }
-            val quote = quoteController.getQuote(id)
-            if (quote != null) {
-                call.respond(quote)
-            } else {
-                call.respond(HttpStatusCode.NotFound, "Quote not found")
+            try {
+                val id = call.parameters["id"]
+                if (id.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "ID parameter is missing or invalid"))
+                    return@get
+                }
+                val quote = quoteController.getQuote(id)
+                if (quote != null) {
+                    call.respond(quote)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, mapOf("error" to "Quote not found"))
+                }
+            } catch (e: IllegalArgumentException) {
+                logger.warn("Invalid request: ${e.message}")
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to (e.message ?: "Invalid request")))
+            } catch (e: Exception) {
+                logger.error("Error retrieving quote", e)
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to retrieve quote"))
             }
         }
 
         post("/add") {
-            val quoteRequest = call.receive<QuoteRequest>()
-            val newQuote = quoteController.addQuote(
-                quoteRequest.quoteText,
-                quoteRequest.author ?: "Unknown",
-                quoteRequest.source
-            )
-            call.respond(HttpStatusCode.Created, newQuote)
+            try {
+                val quoteRequest = call.receive<QuoteRequest>()
+                val newQuote = quoteController.addQuote(
+                    quoteRequest.quoteText,
+                    quoteRequest.author ?: "Unknown",
+                    quoteRequest.source
+                )
+                call.respond(HttpStatusCode.Created, newQuote)
+            } catch (e: IllegalArgumentException) {
+                logger.warn("Invalid quote data: ${e.message}")
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to (e.message ?: "Invalid quote data")))
+            } catch (e: Exception) {
+                logger.error("Error creating quote", e)
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to create quote"))
+            }
         }
 
         delete("/{id}") {
-            val id = call.parameters["id"]
-            if (id == null) {
-                call.respond(HttpStatusCode.BadRequest, "ID parameter is missing")
-                return@delete
-            }
-            if (quoteController.deleteQuote(id)) {
-                call.respond(HttpStatusCode.OK)
-            } else {
-                call.respond(HttpStatusCode.NotFound, "Quote not found or could not be deleted")
+            try {
+                val id = call.parameters["id"]
+                if (id.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "ID parameter is missing or invalid"))
+                    return@delete
+                }
+                if (quoteController.deleteQuote(id)) {
+                    call.respond(HttpStatusCode.OK, mapOf("message" to "Quote deleted successfully"))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, mapOf("error" to "Quote not found or could not be deleted"))
+                }
+            } catch (e: IllegalArgumentException) {
+                logger.warn("Invalid request: ${e.message}")
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to (e.message ?: "Invalid request")))
+            } catch (e: Exception) {
+                logger.error("Error deleting quote", e)
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to delete quote"))
             }
         }
     }

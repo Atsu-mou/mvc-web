@@ -1,12 +1,9 @@
 package com.example
 
-import com.example.model.DatabaseSingleton
-import io.ktor.server.application.*
 import io.ktor.server.netty.*
 
+/**
+ * Main entry point for the MVC application.
+ * Starts the Ktor server using EngineMain.
+ */
 fun main(args: Array<String>): Unit = EngineMain.main(args)
-
-fun Application.module() {
-    DatabaseSingleton.init(this)
-
-}
