@@ -1,6 +1,5 @@
 package com.example.routing
 
-import com.example.routing.quoteRoutes
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 

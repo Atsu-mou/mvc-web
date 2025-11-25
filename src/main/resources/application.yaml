@@ -5,6 +5,6 @@ ktor:
   deployment:
     port: 8080
 aws:
-  region: ${AWS_REGION:us-east-1}
-  endpoint: ${AWS_ENDPOINT:http://localhost:8000}
+  region: ${APP_REGION:ap-southeast-2}
+#  endpoint: ${AWS_ENDPOINT:http://localhost:8000}
   tableName: ${AWS_TABLE_NAME:quotes}
