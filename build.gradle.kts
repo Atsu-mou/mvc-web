@@ -56,6 +56,11 @@ dependencies {
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
     // Tests
+    testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
     testImplementation(platform("io.ktor:ktor-bom:$ktor_version"))
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation(kotlin("test")) // resolves to org.jetbrains.kotlin:kotlin-test
