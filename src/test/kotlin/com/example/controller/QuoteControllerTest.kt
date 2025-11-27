@@ -16,12 +16,12 @@ import java.util.UUID
 class QuoteControllerTest {
 
     private lateinit var quoteService: QuoteService
-    private lateinit var quoteController: QuoteController
+    private lateinit var quoteControllerImpl: QuoteControllerImpl
 
     @BeforeEach
     fun setUp() {
         quoteService = mockk()
-        quoteController = QuoteController(quoteService)
+        quoteControllerImpl = QuoteControllerImpl(quoteService)
     }
 
     @Test
@@ -31,7 +31,7 @@ class QuoteControllerTest {
         val expectedQuote = Quote(UUID.randomUUID().toString(), text, author, Instant.now().toString())
         coEvery { quoteService.createQuote(text, author, null) } returns expectedQuote
 
-        val result = quoteController.addQuote(text, author)
+        val result = quoteControllerImpl.addQuote(text, author)
 
         assertEquals(expectedQuote, result)
         coVerify(exactly = 1) { quoteService.createQuote(text, author, null) }
@@ -43,7 +43,7 @@ class QuoteControllerTest {
         val expectedQuote = Quote(id, "Test quote", "Test author", Instant.now().toString())
         coEvery { quoteService.getQuote(id) } returns expectedQuote
 
-        val result = quoteController.getQuote(id)
+        val result = quoteControllerImpl.getQuote(id)
 
         assertEquals(expectedQuote, result)
         coVerify(exactly = 1) { quoteService.getQuote(id) }
@@ -57,7 +57,7 @@ class QuoteControllerTest {
         )
         coEvery { quoteService.getAllQuotes() } returns expectedQuotes
 
-        val result = quoteController.getAllQuotes()
+        val result = quoteControllerImpl.getAllQuotes()
 
         assertEquals(expectedQuotes, result)
         coVerify(exactly = 1) { quoteService.getAllQuotes() }
@@ -68,7 +68,7 @@ class QuoteControllerTest {
         val quoteToUpdate = Quote(UUID.randomUUID().toString(), "Updated text", "Updated author", Instant.now().toString())
         coEvery { quoteService.updateQuote(quoteToUpdate) } returns true
 
-        val result = quoteController.updateQuote(quoteToUpdate)
+        val result = quoteControllerImpl.updateQuote(quoteToUpdate)
 
         assertTrue(result)
         coVerify(exactly = 1) { quoteService.updateQuote(quoteToUpdate) }
@@ -79,7 +79,7 @@ class QuoteControllerTest {
         val id = UUID.randomUUID().toString()
         coEvery { quoteService.deleteQuote(id) } returns true
 
-        val result = quoteController.deleteQuote(id)
+        val result = quoteControllerImpl.deleteQuote(id)
 
         assertTrue(result)
         coVerify(exactly = 1) { quoteService.deleteQuote(id) }

@@ -1,6 +1,7 @@
 package com.example.di
 
 import com.example.controller.QuoteController
+import com.example.controller.QuoteControllerImpl
 import com.example.repository.DynamoQuoteDao
 import com.example.repository.QuoteDao
 import com.example.service.QuoteService
@@ -60,8 +61,8 @@ class AppModule {
         }
 
         // Controller layer
-        single {
-            QuoteController(get())
+        single<QuoteController> {
+            QuoteControllerImpl(get())
         }
 
         // JSON configuration
