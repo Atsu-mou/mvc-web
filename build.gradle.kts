@@ -56,6 +56,9 @@ dependencies {
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
     // Tests
+    testImplementation("io.ktor:ktor-client-content-negotiation:${ktor_version}")
+    testImplementation("io.ktor:ktor-server-content-negotiation:${ktor_version}")
+    testImplementation("io.ktor:ktor-server-test-host:${ktor_version}")
     testImplementation("io.mockk:mockk:1.13.10")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
     testImplementation(kotlin("test-junit5"))
