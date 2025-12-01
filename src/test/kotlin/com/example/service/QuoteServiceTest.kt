@@ -49,33 +49,39 @@ class QuoteServiceTest {
     }
 
     @Test
-    fun `createQuote should throw exception for blank quote text`() = runBlocking {
-        val mockDao = MockQuoteDao()
-        val service = QuoteServiceImpl(mockDao)
+    fun `createQuote should throw exception for blank quote text`() {
+        runBlocking {
+            val mockDao = MockQuoteDao()
+            val service = QuoteServiceImpl(mockDao)
 
-        assertThrows<IllegalArgumentException> {
-            service.createQuote("", "Test Author")
+            assertThrows<IllegalArgumentException> {
+                service.createQuote("", "Test Author")
+            }
         }
     }
 
     @Test
-    fun `createQuote should throw exception for blank author`() = runBlocking {
-        val mockDao = MockQuoteDao()
-        val service = QuoteServiceImpl(mockDao)
+    fun `createQuote should throw exception for blank author`() {
+        runBlocking {
+            val mockDao = MockQuoteDao()
+            val service = QuoteServiceImpl(mockDao)
 
-        assertThrows<IllegalArgumentException> {
-            service.createQuote("Test quote", "")
+            assertThrows<IllegalArgumentException> {
+                service.createQuote("Test quote", "")
+            }
         }
     }
 
     @Test
-    fun `createQuote should throw exception for quote text exceeding limit`() = runBlocking {
-        val mockDao = MockQuoteDao()
-        val service = QuoteServiceImpl(mockDao)
+    fun `createQuote should throw exception for quote text exceeding limit`() {
+        runBlocking {
+            val mockDao = MockQuoteDao()
+            val service = QuoteServiceImpl(mockDao)
 
-        val longText = "a".repeat(1001)
-        assertThrows<IllegalArgumentException> {
-            service.createQuote(longText, "Test Author")
+            val longText = "a".repeat(1001)
+            assertThrows<IllegalArgumentException> {
+                service.createQuote(longText, "Test Author")
+            }
         }
     }
 
